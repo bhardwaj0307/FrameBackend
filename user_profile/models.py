@@ -138,27 +138,27 @@ class SMSVerification(TimeStampedModel):
     #     return self.verified
 
 
-@receiver(post_save, sender=Profile)
-def send_sms_verification(sender, instance, *args, **kwargs):
-    try:
-        sms = instance.user.sms
-        if sms:
-            pin = sms.pin
-            sms.delete()
-            verification = SMSVerification.objects.create(
-                user=instance.user,
-                phone=instance.user.phone_number,
-                sent=True,
-                verified=True,
-                pin=pin,
-            )
-    except:
-        if instance.user.phone_number:
-            verification = SMSVerification.objects.create(
-                user=instance.user, phone=instance.user.phone_number
-            )
-            # TODO Remove send confirm from here and make view for it.
-            verification.send_confirmation()
+# @receiver(post_save, sender=Profile)
+# def send_sms_verification(sender, instance, *args, **kwargs):
+#     try:
+#         sms = instance.user.sms
+#         if sms:
+#             pin = sms.pin
+#             sms.delete()
+#             verification = SMSVerification.objects.create(
+#                 user=instance.user,
+#                 phone=instance.user.phone_number,
+#                 sent=True,
+#                 verified=True,
+#                 pin=pin,
+#             )
+#     except:
+#         if instance.user.phone_number:
+#             verification = SMSVerification.objects.create(
+#                 user=instance.user, phone=instance.user.phone_number
+#             )
+#             # TODO Remove send confirm from here and make view for it.
+#             verification.send_confirmation()
 
     # if instance.user.profile.phone_number:
     #     verification = SMSVerification.objects.create(user=instance.user, phone=instance.user.profile.phone_number)

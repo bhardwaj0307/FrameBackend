@@ -27,9 +27,11 @@ class UserDataUtils(object):
         obj = None
         try:
             if user_data.is_superuser:
-                obj = User.objects.filter(id=pk).values('id', 'name', 'email', 'is_active', 'is_superuser')
+                obj = User.objects.filter(id=pk).values('id', 'name', 'email', 'is_active', 'is_superuser',
+                                                        "phone_number")
             else:
-                obj = User.objects.filter(id=user_data.id).values('id', 'name', 'email', 'is_active', 'is_superuser')
+                obj = User.objects.filter(id=user_data.id).values('id', 'name', 'email', 'is_active', 'is_superuser',
+                                                                  "phone_number")
         except:
             pass
         return obj
@@ -37,7 +39,7 @@ class UserDataUtils(object):
     def get_single_new_data_utils(self, pk):
         obj = None
         try:
-            obj = User.objects.filter(id=pk).values('id', 'name', 'email', "is_active", "is_superuser")
+            obj = User.objects.filter(id=pk).values('id', 'name', 'email', "is_active", "is_superuser", "phone_number")
             print(obj)
         except:
             pass
@@ -47,8 +49,8 @@ class UserDataUtils(object):
         obj_status = False
         try:
             a = User.objects.create(**data)
-        except:
-            pass
+        except Exception as e:
+            print(e)
         return a.id
 
     def update_user_data_utils(self, logged_person_id, **data):
