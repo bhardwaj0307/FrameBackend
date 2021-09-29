@@ -10,7 +10,7 @@ from rest_framework import status, exceptions
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from user_profile.models import *
 from user_custom.api.serializers import PasswordTokenSerializer
 from user_custom.api.serializers import UserSerializer
@@ -71,7 +71,11 @@ class UsersApiCreateRead(ViewSet):
             if serializer.is_valid():
                 pk = self.data_class.create_user_utils(**request.data)
                 user_obj = self.data_class.get_single_new_utils(pk)
+                user_data = User.objects.get(id=pk)
                 if user_obj:
+                    token = RefreshToken.for_user(user_data)
+                    user_obj[0]["refresh"] = str(token)
+                    user_obj[0]["access"] = str(token.access_token)
                     response = {"success": True,
                                 "message": "The User has been created.",
                                 'data': user_obj}
