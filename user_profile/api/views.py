@@ -1,3 +1,4 @@
+from user_custom.models import User
 from django.conf import settings
 from rest_framework import status, serializers, exceptions
 from rest_framework.generics import GenericAPIView
@@ -9,7 +10,8 @@ __all__ = [
     "update_address",
     "get_all_address",
     "address_by_id",
-    "delete_address_by_id"
+    "delete_address_by_id",
+    "profile_update"
 ]
 
 
@@ -63,6 +65,7 @@ class GetAllAddress(GenericAPIView):
     """
     Get all Address of logged User
     """
+    serializer_class = AddressSerializer
 
     def get(self, request, *args, **kwargs):
         response = {"success": False, 'data': [],
@@ -81,6 +84,7 @@ class GetAddressById(GenericAPIView):
     """
     Get Address by Id of logged User
     """
+    serializer_class = AddressSerializer
 
     def get(self, request, address_id):
         response = {"success": False, 'data': [],
@@ -114,8 +118,37 @@ class DeleteAddress(GenericAPIView):
         return Response(response, status=status_code)
 
 
+class ProfileUpdate(GenericAPIView):
+    """
+    An Api View which Update Address with Address_id of logged User
+    """
+    throttle_classes = ()
+    serializer_class = ProfileSerializer
+
+    def put(self, request):
+        logged_person_id = request.user.id
+        user_obj = User.objects.filter(id=logged_person_id).update(email=None)
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            data = request.data
+            user_data = data["user_data"][0]
+            del data["user_data"]
+            profile_update = Profile.objects.filter(user_id=logged_person_id).update(**data)
+            user_update = User.objects.filter(id=logged_person_id).update(**user_data)
+            response = {"success": True,
+                        "message": "The User Profile has been Updated.",
+                        }
+            status_code = status.HTTP_201_CREATED
+        else:
+            response = {"success": False,
+                        "errors": serializer.errors}
+            status_code = status.HTTP_406_NOT_ACCEPTABLE
+        return Response(response, status=status_code)
+
+
 create_address = CreateAddress.as_view()
 update_address = UpdateAddress.as_view()
 get_all_address = GetAllAddress.as_view()
 address_by_id = GetAddressById.as_view()
 delete_address_by_id = DeleteAddress.as_view()
+profile_update = ProfileUpdate.as_view()
