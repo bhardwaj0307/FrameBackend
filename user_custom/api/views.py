@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
+from user_profile.models import *
 from user_custom.api.serializers import PasswordTokenSerializer
 from user_custom.api.serializers import UserSerializer
 from user_custom.api.utils import UserUtils
@@ -165,11 +166,14 @@ class UsersApiCreateRead(ViewSet):
         logged_person_id = request.user.id
         mortgage_obj = self.data_class.get_current_user_utils(logged_person_id)
         if mortgage_obj:
-            mortgage_obj.append({"permission": {
-                "action": "update", "subject": "Post"
-            }})
+            obj = list(Profile.objects.filter(user_id=logged_person_id).values())
+            for profile_obj in obj:
+                mortgage_obj[0]["birth_date"] = profile_obj["birth_date"]
+                mortgage_obj[0]["gender"] = profile_obj["gender"]
+                mortgage_obj[0]["about"] = profile_obj["about"]
+                mortgage_obj[0]["profile_picture"] = profile_obj["profile_picture"]
             response = {"success": True, 'data': mortgage_obj,
-                        "message": 'LOGIN User Detail '}
+                        "message": 'Login User Detail '}
             status_code = status.HTTP_200_OK
         return Response(response, status=status_code)
 
@@ -306,4 +310,3 @@ class ResetPasswordConfirm(ViewSet):
         except KeyError:
             # action is not set return default permission_classes
             return [permission() for permission in self.permission_classes]
-

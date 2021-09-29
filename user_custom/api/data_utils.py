@@ -74,7 +74,7 @@ class UserDataUtils(object):
         try:
 
             obj = list(
-                User.objects.filter(id=logged_person_id).values('id', 'name', 'email', 'is_superuser', "is_active"))
+                User.objects.filter(id=logged_person_id).values('id', 'name', 'email', 'is_superuser', "is_active", "phone_number"))
         except:
             pass
         return obj

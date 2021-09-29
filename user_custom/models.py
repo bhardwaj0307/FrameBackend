@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         'unique': _("A user with that email already exists."),
     }, )
     name = models.CharField(_('Full name'), max_length=150, blank=False)
-    phone_number = PhoneNumberField(blank=True, null=True)
+    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,

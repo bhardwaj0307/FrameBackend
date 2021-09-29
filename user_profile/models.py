@@ -46,7 +46,7 @@ class Profile(TimeStampedModel):
     )
 
     user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to=user_directory_path, blank=True)
+    profile_picture = models.ImageField(upload_to=user_directory_path, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     about = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
@@ -78,7 +78,7 @@ def create_user_profile(sender, instance, created, *args, **kwargs):
 
 class Address(TimeStampedModel):
     user = models.ForeignKey(User, related_name="address", on_delete=models.CASCADE)
-    country = CountryField(blank=False, null=False)
+    country = CountryField(blank=False, null=False, default="IN")
     city = models.CharField(max_length=100, blank=False, null=False)
     district = models.CharField(max_length=100, blank=False, null=False)
     street_address = models.CharField(max_length=250, blank=False, null=False)
@@ -91,6 +91,15 @@ class Address(TimeStampedModel):
     apartment_number = models.IntegerField(
         blank=True, null=True, validators=[MinValueValidator(1)]
     )
+
+
+@receiver(post_save, sender=Address)
+def address_primary(sender, instance, created, *args, **kwargs):
+    if created:
+        if instance.primary:
+            Address.objects.filter(user=instance.user).exclude(id=instance.id).update(primary=False)
+    elif instance.primary:
+        Address.objects.filter(user=instance.user).exclude(id=instance.id).update(primary=False)
 
 
 class SMSVerification(TimeStampedModel):
@@ -160,10 +169,10 @@ class SMSVerification(TimeStampedModel):
 #             # TODO Remove send confirm from here and make view for it.
 #             verification.send_confirmation()
 
-    # if instance.user.profile.phone_number:
-    #     verification = SMSVerification.objects.create(user=instance.user, phone=instance.user.profile.phone_number)
-    #     # TODO Remove send confirm from here and make view for it.
-    #     verification.send_confirmation()
+# if instance.user.profile.phone_number:
+#     verification = SMSVerification.objects.create(user=instance.user, phone=instance.user.profile.phone_number)
+#     # TODO Remove send confirm from here and make view for it.
+#     verification.send_confirmation()
 
 
 class DeactivateUser(TimeStampedModel):
@@ -186,13 +195,13 @@ class NationalIDImage(models.Model):
         return self.user.name
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
-        *args,
-        **kwargs,
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
+            *args,
+            **kwargs,
     ):
         # if size greater than 300kb then it will send to compress image function
         image = self.image

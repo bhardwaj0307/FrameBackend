@@ -123,12 +123,10 @@ third_party_urls = [
                    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 installed_apps_urls = [
-                          url(r'^api/v1/users/', include('user_custom.api.urls', namespace='users_api')),
-                          # url(r'^api/v1/users_data/', include('user_profile.urls', namespace='users_api')),
+                          url(r'^api/users/', include('user_custom.api.urls', namespace='users_api')),
+                          url(r'^api/user_data/', include('user_profile.api.urls', namespace='users_data')),
                           url(r'^api/password_change/',
                               include("user_custom.api.forget_password_urls", namespace='api')),
-                          # url(r'^api/email_verify/',
-                          #     include("user_custom.api.email_verification_urls", namespace='email_api')),
                       ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = third_party_urls + installed_apps_urls

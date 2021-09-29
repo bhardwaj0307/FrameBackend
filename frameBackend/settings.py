@@ -67,6 +67,13 @@ THIRDPARTY_APPS = [
     'django_extensions',
     'timezone_field',
     'drf_yasg',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + PROJECT_APPS + THIRDPARTY_APPS
@@ -217,3 +224,19 @@ CELERY_TASK_PROTOCOL = 1
 
 ######################     Cash Flow    ###################
 CASH_FLOW_AGE_END_OF_THE_GRAPH = 99
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
