@@ -7,13 +7,16 @@ blessings==1.7
 bpython==0.19
 celery==4.4.6
 certifi==2020.12.5
+cffi==1.14.6
 chardet==4.0.0
 coreapi==2.3.3
 coreschema==0.0.4
+cryptography==3.4.8
 curtsies==0.3.5
 cwcwidth==0.1.4
 defusedxml==0.7.1
 Django==3.0.5
+django-allauth==0.45.0
 django-autoslug==1.9.8
 django-celery-beat==2.0.0
 django-cors-headers==3.2.1
@@ -37,6 +40,7 @@ Django-Verify-Email==1.0.7
 djangorestframework==3.11.0
 djangorestframework-guardian==0.3.0
 djangorestframework-simplejwt==4.4.0
+drf-extra-fields==3.1.1
 drf-yasg==1.20.0
 EasyProcess==0.3
 future==0.18.2
@@ -57,6 +61,7 @@ packaging==20.9
 phonenumbers==8.12.33
 Pillow==8.2.0
 psycopg2==2.8.6
+pycparser==2.20
 pycryptodome==3.10.1
 pycryptodomex==3.10.1
 pydotplus==2.0.2
